@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getDocsClient } from '../../clients.js';
 import { DocumentIdParameter } from '../../types.js';
 import * as GDocsHelpers from '../../googleDocsApiHelpers.js';
+import { TAB_LIST_FIELDS, TAB_LIST_WITH_CONTENT_FIELDS } from './tabFieldMasks.js';
 
 export function register(server: FastMCP) {
   server.addTool({
@@ -27,9 +28,7 @@ export function register(server: FastMCP) {
           documentId: args.documentId,
           includeTabsContent: true,
           // Only get essential fields for tab listing
-          fields: args.includeContent
-            ? 'title,tabs' // Get all tab data if we need content summary
-            : 'title,tabs(tabProperties,childTabs)', // Otherwise just structure
+          fields: args.includeContent ? TAB_LIST_WITH_CONTENT_FIELDS : TAB_LIST_FIELDS,
         });
 
         const docTitle = res.data.title || 'Untitled Document';
