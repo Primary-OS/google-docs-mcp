@@ -100,6 +100,9 @@ if (isRemote) {
   const missing = ['BASE_URL', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'].filter(
     (k) => !process.env[k]
   );
+  if (process.env.TOKEN_STORE === 'firestore' && !process.env.GCLOUD_PROJECT) {
+    missing.push('GCLOUD_PROJECT');
+  }
   if (missing.length > 0) {
     logger.error(`FATAL: Missing required env vars for httpStream mode: ${missing.join(', ')}`);
     process.exit(1);
