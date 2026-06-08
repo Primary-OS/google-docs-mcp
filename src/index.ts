@@ -221,6 +221,7 @@ try {
       httpStream: {
         port,
         host: '0.0.0.0',
+        stateless: true,
       },
     });
 
