@@ -27,6 +27,7 @@ import { registerLandingPage } from './landingPage.js';
 import { registerDownloadRoute } from './downloadProxy.js';
 import { FirestoreTokenStorage } from './firestoreTokenStorage.js';
 import { parseStatelessFlag } from './config.js';
+import { enableUpstreamOfflineAccess } from './upstreamAuth.js';
 import { logger } from './logger.js';
 
 // --- Auth subcommand ---
@@ -160,6 +161,13 @@ if (oauthProxy) {
     }
     return origIssue(clientId, upstreamTokens);
   };
+
+  // Request Google offline access so the upstream token exchange returns a
+  // refresh_token. Without it, the stored Google access token (1-hour TTL)
+  // can never be renewed and every API call fails ~1 hour after a user
+  // authenticates. With a refresh_token present, google-auth-library
+  // auto-refreshes on 401 (see remoteWrapper.createClients / upstreamAuth.ts).
+  enableUpstreamOfflineAccess(oauthProxy);
 }
 
 const server = new FastMCP({
